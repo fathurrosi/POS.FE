@@ -1,0 +1,108 @@
+﻿@model MenuModel
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<!--begin::Horizontal Form-->
+<div class="card card-warning card-outline mb-4">
+    <!--begin::Header-->
+    <div class="card-header"><div class="card-title">Menu Detail</div></div>
+    <!--end::Header-->
+    <!--begin::Form-->
+    <form asp-action="Edit" >
+        <!--begin::Body-->
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input asp-for="Item.Id" type="hidden" />
+        <input asp-for="Item.Code" type="hidden" />
+        <input asp-for="Item.CreatedDate" type="hidden" />
+        <input asp-for="Item.CreatedBy" type="hidden" />
+        <input asp-for="Item.ModifiedDate" type="hidden" />
+        <input asp-for="Item.ModifiedBy" type="hidden" />
+        <input asp-for="Item.Shortcut" type="hidden" />
+        <input asp-for="Item.Ctrl" type="hidden" />
+        <input asp-for="Item.Shift" type="hidden" />
+        <input asp-for="Item.Alt" type="hidden" />
+
+        <div class="card-body">
+
+            <div class="row mb-3">
+                <label asp-for="Item.Code" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-4">                    
+                    @Html.DisplayFor(modelItem => modelItem.Item.Code)                    
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label asp-for="Item.Name" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-4">
+                    <input asp-for="Item.Name" class="form-control" disabled="@Model.IsDisabled" />
+                    <span asp-validation-for="Item.Name" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label asp-for="Item.ParentId" class="col-sm-2 col-form-label">  </label>
+                <div class="col-sm-4">
+                    <select asp-for="Item.ParentId" asp-items="@Model.ParentList" class="form-select" disabled="@Model.IsDisabled">
+                        <option value="" selected>--Select Parent--</option>
+                    </select>
+                    <span asp-validation-for="Item.ParentId" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label asp-for="Item.Sequence" class="col-sm-2 col-form-label">  </label>
+                <div class="col-sm-4">
+                    <input asp-for="Item.Sequence" class="form-control" disabled="@Model.IsDisabled" />
+                    <span asp-validation-for="Item.Sequence" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label asp-for="Item.Ico" class="col-sm-2 col-form-label">  </label>
+                <div class="col-sm-4">
+                    <input asp-for="Item.Ico" class="form-control" disabled="@Model.IsDisabled" />
+                    <span asp-validation-for="Item.Ico" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label asp-for="Item.Description" class="col-sm-2 col-form-label">  </label>
+                <div class="col-sm-4">
+                    <input asp-for="Item.Description" class="form-control" disabled="@Model.IsDisabled" />
+                    <span asp-validation-for="Item.Description" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label asp-for="Item.Route" class="col-sm-2 col-form-label">  </label>
+                <div class="col-sm-4">
+                    <input asp-for="Item.Route" class="form-control" disabled="@Model.IsDisabled" />
+                    <span asp-validation-for="Item.Route" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label asp-for="Item.Action" class="col-sm-2 col-form-label">  </label>
+                <div class="col-sm-4">
+                    <input asp-for="Item.Action" class="form-control" disabled="@Model.IsDisabled" />
+                    <span asp-validation-for="Item.Action" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <!--end::Body-->
+        <!--begin::Footer-->
+        <div class="card-footer">
+            @* <input type="submit" value="Save" class="btn btn-primary" /> *@
+            <button class="btn btn-primary" type="submit">Save</button>
+            @* <button asp-controller="Menu" asp-action="Edit">Save</button> *@
+            <button class="btn btn-secondary" formaction="@Url.Action("Index")">Cancel</button>
+        </div>
+        <!--end::Footer-->
+    </form>
+    <!--end::Form-->
+</div>
+<!--end::Horizontal Form-->
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

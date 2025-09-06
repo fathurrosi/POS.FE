@@ -1,0 +1,97 @@
+﻿@model IEnumerable<POS.Presentation.Models.UserModel>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-4">
+            <div class="card-header">
+                @* <h3 class="card-title">Users Data</h3> *@
+                <a asp-action="Create" class="card-title">Create New</a>
+            </div>
+           
+            <!-- /.card-header -->
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Username)
+                            </th>
+                           @*  <th>
+                                @Html.DisplayNameFor(model => model.Password)
+                            </th> *@
+                            <th>
+                                @Html.DisplayNameFor(model => model.LastLogin)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.IsLogin)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Ipaddress)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.MachineName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.IsActive)
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr class="align-middle">
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Username)
+                                </td>
+                                @* <td>
+                                    @Html.DisplayFor(modelItem => item.Password)
+                                </td> *@
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.LastLogin)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.IsLogin)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Ipaddress)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.MachineName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.IsActive)
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                
+                </table>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer clearfix">
+                <ul class="pagination pagination-sm m-0 float-end">
+                    <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+                </ul>
+            </div>
+        </div>
+        <!-- /.card -->
+    </div>
+    <!-- /.col -->
+</div>

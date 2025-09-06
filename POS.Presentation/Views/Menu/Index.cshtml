@@ -1,0 +1,252 @@
+﻿@model MenuListModel
+
+@{
+    ViewData["Title"] = "Home Page";
+    var items = Model.Items;
+    string screen = Constants.CODE_Menu;
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-4">
+            <div class="card-header">
+                @if (Html.AllowCreate(screen).ToString() == "Y")
+                {
+                    <a asp-action="Create" class="card-title">Create New</a>
+                }
+            </div>
+
+            <!-- /.card-header -->
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>
+                                No
+                            </th>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Description
+                            </th>
+                            @* <th>
+                                CreatedDate
+                            </th>
+                            <th>
+                                CreatedBy
+                            </th>
+                            <th>
+                                ModifiedDate
+                            </th>
+                            <th>
+                                ModifiedBy
+                            </th> *@
+                            <th class="col-actions"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in items)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.RowIndex)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Description)
+                                </td>
+                                <td>
+                                    @* @if (Html.AllowRead(screen).ToString() == "Y")
+                                    {
+                                        @Html.ActionLink("", "Details", new { id = item.ID, edit = true }, new { @class = "bi bi-file-text" })
+                                    } *@
+                                    @if (Html.AllowEdit(screen).ToString() == "Y")
+                                    {
+                                        @Html.ActionLink("", "Edit", new { id = item.ID }, new { @class = "bi bi-pencil-square" })
+                                    }
+                                    @if (Html.AllowDelete(screen).ToString() == "Y")
+                                    {
+                                        @Html.ActionLink("", "Delete", "Menu", new { id = item.ID }, new { @class = "bi bi-trash", onclick = "return confirm('Are you sure you want to delete this item?')" })
+                                        
+                                        @* <form asp-controller="Menu" asp-action="Delete" method="post" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                                            <input type="hidden" name="id" value="@item.ID" />
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                        </form> *@
+
+
+                                        
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer clearfix">
+                <ul class="pagination pagination-sm m-0 float-end">
+                    @if (Model.HasPreviousPage)
+                    {
+                        <li class="page-item">
+                            <a asp-action="Index" asp-route-pageIndex="1" class="page-link">&laquo;</a>
+                        </li>
+                    }
+                    @if (Model.TotalPages > 0)
+                    {
+                        for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item">
+                                <a asp-action="Index" asp-route-pageIndex="@i" class="page-link">@i</a>
+                            </li>
+                        }
+                    }
+                    @if (Model.HasNextPage)
+                    {
+                        <li class="page-item">
+                            <a asp-action="Index" asp-route-pageIndex="@Model.TotalPages" class="page-link">&raquo;</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <!-- /.card -->
+    </div>
+    <!-- /.col -->
+</div>
+
+@section Scripts {
+
+    <script type="text/javascript">
+         function deleteItem(id) {
+            if (confirm('Are you sure you want to delete this item?')) {
+                var form = document.createElement('form');
+                form.action = '@Url.Action("Delete", "Menu")';
+                form.method = 'post';
+
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'id';
+                input.value = id;
+                form.appendChild(input);
+
+                var token = document.createElement('input');
+                token.type = 'hidden';
+                token.name = '__RequestVerificationToken';
+                token.value = '@Html.AntiForgeryToken().ToString()';
+                form.appendChild(token);
+
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+        //         function deleteItem(id) {
+        //     $.ajax({
+        //         type: "POST",
+        //         url: "/Menu/Delete",
+        //         data: { id: id, __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() },
+        //         success: function (data) {
+        //             // Handle success
+        //             window.location.href = "/Menu/Index";
+        //         },
+        //         error: function (xhr, status, error) {
+        //             // Handle error
+        //         }
+        //     });
+        // }
+
+        //  function deleteItem(id) {
+        //     if (confirm("Are you sure you want to delete this item?")) {
+        //         $.ajax({
+        //             type: "POST",
+        //             url: "/Menu/Delete",
+        //             data: { id: id},
+        //             success: function (data) {
+        //                 location.reload();
+        //             },
+        //             error: function (xhr, status, error) {
+        //                 alert("Error deleting item");
+        //             }
+        //         });
+        //     }
+        // }
+
+        // function deleteItem(id) {
+        //     if (confirm("Are you sure you want to delete this item?")) {
+        //         fetch(`/Menu/${id}`, {
+        //             method: 'DELETE',
+        //             headers: {
+        //     'Content-Type': 'application/json',
+        //     'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+        // }
+        //             }
+        //         })
+        //         .then(response => {
+        //             if (response.ok) {
+        //                 // Item deleted successfully, redirect or update UI
+        //                 window.location.href = "/Menu/Index";
+        //             } else {
+        //                 // Handle error
+        //                 console.error("Error deleting item");
+        //             }
+        //         })
+        //         .catch(error => console.error(error));
+        //     }
+        // }
+
+        // $(document).ready(function () {
+        //     $(".delete-link").click(function (e) {
+        //         e.preventDefault();
+        //         var id = $(this).attr("data-id");
+        //         if (confirm("Are you sure you want to delete this item A?")) {
+        //             fetch(`/api/Menu/${id}`, {
+        //                 method: 'DELETE',
+        //                 headers: {
+        //                     'Content-Type': 'application/json'
+        //                 }
+        //             })
+        //             .then(response => {
+        //                 if (response.ok) {
+        //                     // Item deleted successfully, redirect or update UI
+        //                     window.location.href = "/Menu/Index";
+        //                 } else {
+        //                     // Handle error
+        //                     console.error("Error deleting item");
+        //                 }
+        //             })
+        //             .catch(error => console.error(error));
+        //         }
+        //     });
+        // });
+
+        $(document).ready(function () {
+            $('.delete-item').on('click', function () {
+                var itemId = $(this).data('id');
+                alert(itemId);
+                if (confirm('Are you sure you want to delete this item?')) {
+                    $.ajax({
+                        url: '/Menu/DeleteConfirmed', // Adjust controller/action name
+                        type: 'POST', // Or 'DELETE' if configured in controller
+                        data: { id: itemId },
+                        success: function (response) {
+                            if (response.success) {
+                                // Remove the deleted item from the UI
+                                $(`button[data-id="${itemId}"]`).closest('tr').remove(); // Example for table row
+                                alert('Item deleted successfully!');
+                            } else {
+                                alert('Error deleting item: ' + response.message);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            alert('An error occurred during deletion.');
+                            console.error(xhr.responseText);
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}

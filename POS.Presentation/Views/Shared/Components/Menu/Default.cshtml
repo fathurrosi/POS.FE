@@ -1,0 +1,88 @@
+﻿@{
+    List<POS.Domain.Entities.Menu> items = Model;
+    List<POS.Domain.Entities.Menu> parents = items.Where(t => !t.ParentId.HasValue || t.ParentId.Value == 0).OrderBy(t => t.Sequence).ToList();
+}
+<!--begin::Sidebar Wrapper-->
+<div class="sidebar-wrapper">
+    <nav class="mt-2">
+        <!--begin::Sidebar Menu-->
+        <ul class="nav sidebar-menu flex-column"
+            data-lte-toggle="treeview"
+            role="navigation"
+            aria-label="Main navigation"
+            data-accordion="false"
+            id="navigation">
+            @* 
+            <li class="nav-item">                
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="nav-link">
+                    <i class="nav-icon bi bi-palette"></i>
+                    <p>Theme Generate</p>
+                </a>
+            </li>
+ *@
+
+            @foreach (POS.Domain.Entities.Menu item in parents)
+            {
+                var childItems = items.Where(t => t.ParentId == item.Id).OrderBy(t => t.Sequence).ToList();
+                @* <li class="nav-item menu-open"> *@
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="@item.Ico"></i>
+                        <p>
+                            @item.Name
+                            <i class="nav-arrow bi bi-chevron-right"></i>
+                        </p>
+                    </a>
+                    @if (childItems.Count > 0)
+                    {
+                        <ul class="nav nav-treeview">
+                            @foreach (POS.Domain.Entities.Menu childItem in childItems)
+                            {
+                                <li class="nav-item">
+                                    <a asp-area="" asp-controller="@childItem.Route" asp-action="@childItem.Action" class="nav-link">
+                                        <i class="nav-icon bi bi-circle"></i>
+                                        <p>@childItem.Name</p>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </li>
+            }
+
+            @* 
+            <li class="nav-item menu-open">
+                <a href="#" class="nav-link">
+                    <i class="nav-icon bi bi-box-seam-fill"></i>
+                    <p>
+                        User Management
+                        <i class="nav-arrow bi bi-chevron-right"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                        <a asp-area="" asp-controller="User" asp-action="Index" class="nav-link">
+                            <i class="nav-icon bi bi-circle"></i>
+                            <p>Users</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-area="" asp-controller="Role" asp-action="Index" class="nav-link">
+                            <i class="nav-icon bi bi-circle"></i>
+                            <p>Roles</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a asp-area="" asp-controller="Previllage" asp-action="Index" class="nav-link">
+                            <i class="nav-icon bi bi-circle"></i>
+                            <p>Previllage</p>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+                   *@    
+        </ul>
+        <!--end::Sidebar Menu-->
+    </nav>
+</div>
+<!--end::Sidebar Wrapper-->
