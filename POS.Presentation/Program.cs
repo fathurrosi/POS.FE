@@ -32,16 +32,15 @@ builder.Services.AddAuthentication(options =>
     options.DefaultChallengeScheme = POS.Shared.Constants.Cookies_Name;
 }).AddCookie(POS.Shared.Constants.Cookies_Name, options =>
 {
-    // Cookie settings
     options.LoginPath = "/User/Login";
     options.EventsType = typeof(POSCookieHandler);
-    options.Cookie.HttpOnly = true; // Prevents client-side script access to the cookie
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(60); // Sets the cookie expiration time
-    options.LoginPath = "/User/Login"; // Path to the login page
+    options.Cookie.HttpOnly = true; 
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(60); 
+    options.LoginPath = "/User/Login"; 
     options.LogoutPath = "/Home/SignOut";
-    options.AccessDeniedPath = "/Home/AccessDenied"; // Path for access denied
-    options.SlidingExpiration = true; // Renews the cookie if it's nearing expiration and the user is active
-    options.Cookie.Name = POS.Shared.Constants.Cookies_Name; // Optional: Custom cookie name
+    options.AccessDeniedPath = "/Home/AccessDenied";
+    options.SlidingExpiration = true;
+    options.Cookie.Name = POS.Shared.Constants.Cookies_Name; 
 });
 builder.Services.AddScoped<POSCookieHandler>();
 
@@ -53,7 +52,6 @@ builder.Services.AddHttpClient("ApiClient", client =>
 {
     client.BaseAddress = new Uri(apiUrl);
     client.DefaultRequestHeaders.Add("Accept", "application/json");
-    // Add other default headers or configurations here
 })
 .AddHttpMessageHandler<JwtAuthHeaderHandler>();
 
