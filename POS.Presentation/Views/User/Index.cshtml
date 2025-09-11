@@ -65,7 +65,7 @@
                                     }
                                     @if (Html.AllowDelete(screen).ToString() == "Y")
                                     {
-                                        @Html.ActionLink("", "Delete", "Menu", new { id = item.Username }, new { @class = "bi bi-trash", onclick = "return confirm('Are you sure you want to delete this item?')" })
+                                        @Html.ActionLink("", "Delete", "User", new { id = item.Username }, new { @class = "bi bi-trash", onclick = "return confirm('Are you sure you want to delete this item?')" })
                                     }
                                 </td>
                             </tr>

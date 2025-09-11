@@ -18,11 +18,11 @@ namespace POS.Presentation.Services.Implementations
         {
             _httpClient = httpClientFactory.CreateClient("ApiClient");
         }
-        public async Task<List<UserModel>> GetDataAsync()
+        public async Task<List<User>> GetDataAsync()
         {
             var response = await _httpClient.GetAsync("api/User");
             response.EnsureSuccessStatusCode(); // Throws an exception if not a success status code
-            var data = await response.Content.ReadFromJsonAsync<List<UserModel>>();
+            var data = await response.Content.ReadFromJsonAsync<List<User>>();
             return data;
         }
 
@@ -39,11 +39,11 @@ namespace POS.Presentation.Services.Implementations
 
 
 
-        public async Task<UserModel> GetByUsername(UserModel model)
+        public async Task<User> GetByUsername(UserModel model)
         {
             var response = await _httpClient.PostAsJsonAsync("api/Auth/login", model);
             response.EnsureSuccessStatusCode();
-            var createdData = await response.Content.ReadFromJsonAsync<UserModel>();
+            var createdData = await response.Content.ReadFromJsonAsync<User>();
             return createdData;
         }
 
@@ -58,27 +58,42 @@ namespace POS.Presentation.Services.Implementations
             return createdData;
         }
 
-
-        public async Task<UserModel> GetById(string id)
+        public async Task<User> GetById(string id)
         {
             var response = await _httpClient.GetAsync($"api/User/{id}");
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<UserModel>();
+            return await response.Content.ReadFromJsonAsync<User>();
         }
 
-        Task<List<User>> IUserService.GetDataAsync()
+
+        public async Task<int> Save(User item)
         {
-            throw new NotImplementedException();
+            var json = JsonConvert.SerializeObject(item);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync("api/User", content);
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                return int.Parse(result);
+            }
+            else
+            {
+                return -1;
+            }
         }
 
-        Task<User> IUserService.GetByUsername(UserModel item)
+        public async Task<int> Delete(string id)
         {
-            throw new NotImplementedException();
-        }
-
-        Task<User> IUserService.GetById(string id)
-        {
-            throw new NotImplementedException();
+            var response = await _httpClient.DeleteAsync($"api/User/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                return int.Parse(result);
+            }
+            else
+            {
+                return -1;
+            }
         }
     }
 }

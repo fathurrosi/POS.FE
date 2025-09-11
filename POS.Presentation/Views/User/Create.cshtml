@@ -1,0 +1,57 @@
+﻿@model POS.Presentation.Models.UserModel
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!--begin::Horizontal Form-->
+<div class="card card-warning card-outline mb-4">
+    <!--begin::Header-->
+    <div class="card-header"><div class="card-title">Role Detail</div></div>
+    <!--end::Header-->
+    <!--begin::Form-->
+    <form asp-action="Create">
+        <!--begin::Body-->
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input asp-for="Item.Password" type="hidden" />
+        <input asp-for="Item.LastLogin" type="hidden" />
+        <input asp-for="Item.RefreshTokenExpires" type="hidden" />
+        <input asp-for="Item.RefreshToken" type="hidden" />
+        <input asp-for="Item.MachineName" type="hidden" />
+        <input asp-for="Item.Ipaddress" type="hidden" />
+
+        <div class="card-body">
+            <div class="row mb-3">
+                <label asp-for="Item.Username" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-4">
+                    <input asp-for="Item.Username" class="form-control" disabled="@Model.IsDisabled" />
+                    <span asp-validation-for="Item.Username" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <label asp-for="Item.IsActive" class="col-sm-2 col-form-label">  </label>
+                <div class="col-sm-4">
+                    <select asp-for="Item.IsActive" asp-items="@Model.StatusList" class="form-select" disabled="@Model.IsDisabled">
+                        <option value="" selected>--Select Parent--</option>
+                    </select>
+                    <span asp-validation-for="Item.IsActive" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <!--end::Body-->
+        <!--begin::Footer-->
+        <div class="card-footer">
+            <button class="btn btn-primary" type="submit">Save</button>
+            <button class="btn btn-secondary" formaction="@Url.Action("Index")">Cancel</button>
+        </div>
+        <!--end::Footer-->
+    </form>
+    <!--end::Form-->
+</div>
+<!--end::Horizontal Form-->
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

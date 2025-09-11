@@ -11,5 +11,7 @@ namespace POS.Presentation.Services.Interfaces
         Task<User> GetByUsername(UserModel item);
         Task<User> GetById(string id);
         Task<PagingResult<Usp_GetUserPagingResult>> GetPagingAsync(int pageIndex, int pageSize);
+        Task<int> Save(User item);
+        Task<int> Delete(string id);
     }
 }

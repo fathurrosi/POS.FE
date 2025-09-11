@@ -1,56 +1,66 @@
 ﻿using Azure;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using NuGet.Common;
-using POS.Presentation.Handlers;
 using POS.Domain.Entities;
 using POS.Domain.Models;
 using POS.Domain.Models.Response;
+using POS.Presentation.Handlers;
 using POS.Presentation.Models;
+using POS.Presentation.Services.Implementations;
 using POS.Presentation.Services.Interfaces;
 using POS.Shared;
+using POS.Shared.Settings;
 using System.Security.Claims;
 
 namespace POS.Presentation.Controllers
 {
     public class UserController : Controller
     {
-        private IUserService _userService;
-        private IRoleService _roleService;
-        private IAuthService _authService;
-        private IPrevillageService _previllageService;
-        private IDistributedCache _cache;
+
+        private readonly PagingSettings _pagingSettings;
+        private readonly IUserService _userService;
+        private readonly IRoleService _roleService;
+        private readonly IAuthService _authService;
+        private readonly IPrevillageService _previllageService;
+        private readonly IDistributedCache _cache;
         public UserController(IUserService userService,
             IRoleService roleService,
             IPrevillageService previllageService,
             IDistributedCache cache,
+            PagingSettings pagingSettings,
             IAuthService authService)
         {
             _userService = userService;
             _roleService = roleService;
             _previllageService = previllageService;
-            //  _menuService = menuService;
+
+            _pagingSettings = pagingSettings;
             _cache = cache;
             _authService = authService;
         }
 
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? pageIndex = 1)
         {
-            List<User> items = await _userService.GetDataAsync();
-            return View(items);
+            var result = await _userService.GetPagingAsync(pageIndex.Value, _pagingSettings.DefaultPageSize);
+
+            return View(new UserListModel(result));
         }
 
-        public IActionResult Login()
+
+        public IActionResult Login(string returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginModel model)
+        public async Task<IActionResult> Login(LoginModel model, string returnUrl = null)
         {
             if (ModelState.IsValid)
             {
@@ -94,7 +104,14 @@ namespace POS.Presentation.Controllers
 
                     Response.Cookies.Append("token", response.Token, cookieOptions);
 
-                    return RedirectToAction("Index", "Home");
+                    if (Url.IsLocalUrl(returnUrl))
+                    {
+                        return Redirect(returnUrl);
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
                 }
 
             }
@@ -102,5 +119,80 @@ namespace POS.Presentation.Controllers
             return View(model);
         }
 
+
+        // GET: ProductController/Edit/5
+        public async Task<IActionResult> Edit(string id)
+        {
+            List<SelectListItem> selectList = new List<SelectListItem>();
+            selectList.Add(new SelectListItem { Text = "Active", Value = true.ToString() });
+            selectList.Add(new SelectListItem { Text = "Inactive", Value = false.ToString() });
+
+            var result = await _userService.GetById(id);
+            var model = new UserModel(result);
+            model.StatusList = selectList;
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(string id, UserModel model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _userService.Save(model.Item);
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(model);
+            }
+            catch
+            {
+                return View(model);
+            }
+        }
+
+
+        public IActionResult Create()
+        {
+            List<SelectListItem> selectList = new List<SelectListItem>();
+            selectList.Add(new SelectListItem { Text = "Active", Value = true.ToString() });
+            selectList.Add(new SelectListItem { Text = "Inactive", Value = false.ToString() });
+
+            var model = new UserModel();
+            model.StatusList = selectList;
+            model.IsDisabled = false;
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(UserModel model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _userService.Save(model.Item);
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(model);
+            }
+            catch
+            {
+                return View(model);
+            }
+        }
+
+
+        public async Task<IActionResult> Delete(string id)
+        {
+            var itemToDelete = await _userService.Delete(id);
+            if (itemToDelete == 0)
+            {
+                return NotFound();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
