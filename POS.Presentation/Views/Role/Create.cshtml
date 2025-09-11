@@ -1,0 +1,55 @@
+﻿@model POS.Presentation.Models.RoleModel
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!--begin::Horizontal Form-->
+<div class="card card-warning card-outline mb-4">
+    <!--begin::Header-->
+    <div class="card-header"><div class="card-title">Role Detail</div></div>
+    <!--end::Header-->
+    <!--begin::Form-->
+    <form asp-action="Create">
+        <!--begin::Body-->
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input asp-for="Item.Id" type="hidden" />
+        <input asp-for="Item.CreatedDate" type="hidden" />
+        <input asp-for="Item.CreatedBy" type="hidden" />
+        <input asp-for="Item.ModifiedDate" type="hidden" />
+        <input asp-for="Item.ModifiedBy" type="hidden" />
+
+        <div class="card-body">
+
+            <div class="row mb-3">
+                <label asp-for="Item.Name" class="col-sm-2 col-form-label"></label>
+                <div class="col-sm-4">
+                    <input asp-for="Item.Name" class="form-control" disabled="@Model.IsDisabled" />
+                    <span asp-validation-for="Item.Name" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <label asp-for="Item.Description" class="col-sm-2 col-form-label">  </label>
+                <div class="col-sm-4">
+                    <input asp-for="Item.Description" class="form-control" disabled="@Model.IsDisabled" />
+                    <span asp-validation-for="Item.Description" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+        <!--end::Body-->
+        <!--begin::Footer-->
+        <div class="card-footer">
+            <button class="btn btn-primary" type="submit">Save</button>
+            <button class="btn btn-secondary" formaction="@Url.Action("Index")">Cancel</button>
+        </div>
+        <!--end::Footer-->
+    </form>
+    <!--end::Form-->
+</div>
+<!--end::Horizontal Form-->
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

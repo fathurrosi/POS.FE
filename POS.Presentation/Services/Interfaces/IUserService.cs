@@ -1,12 +1,15 @@
-﻿using POS.Presentation.Models;
+﻿using POS.Domain.Entities;
+using POS.Domain.Models.Result;
+using POS.Presentation.Models;
 
 namespace POS.Presentation.Services.Interfaces
 {
     public interface  IUserService
     {
-        Task<List<UserModel>> GetDataAsync();
-        Task<UserModel> GetByUsername(string username, string password, bool rememberMe);
-        Task<UserModel> GetByUsername(UserModel item);
-        Task<UserModel> GetById(string id);
+        Task<List<User>> GetDataAsync();
+        Task<User> GetByUsername(string username, string password, bool rememberMe);
+        Task<User> GetByUsername(UserModel item);
+        Task<User> GetById(string id);
+        Task<PagingResult<Usp_GetUserPagingResult>> GetPagingAsync(int pageIndex, int pageSize);
     }
 }

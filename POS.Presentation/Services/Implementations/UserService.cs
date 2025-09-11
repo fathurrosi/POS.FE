@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
+using POS.Domain.Entities;
+using POS.Domain.Models.Result;
 using POS.Presentation.Models;
 using POS.Presentation.Services.Interfaces;
 using System.Text;
@@ -24,6 +26,19 @@ namespace POS.Presentation.Services.Implementations
             return data;
         }
 
+
+
+        public async Task<PagingResult<Usp_GetUserPagingResult>> GetPagingAsync(int pageIndex, int pageSize)
+        {
+            var response = await _httpClient.GetAsync($"api/User/Paging/{pageIndex}/{pageSize}");
+            response.EnsureSuccessStatusCode();
+            PagingResult<Usp_GetUserPagingResult> result = await response.Content.ReadFromJsonAsync<PagingResult<Usp_GetUserPagingResult>>();
+
+            return result;
+        }
+
+
+
         public async Task<UserModel> GetByUsername(UserModel model)
         {
             var response = await _httpClient.PostAsJsonAsync("api/Auth/login", model);
@@ -32,14 +47,14 @@ namespace POS.Presentation.Services.Implementations
             return createdData;
         }
 
-        public async Task<UserModel> GetByUsername(string username, string password, bool rememberMe)
+        public async Task<User> GetByUsername(string username, string password, bool rememberMe)
         {
-            UserModel model = new UserModel();
+            User model = new User();
             model.Username = username;
             model.Password = password;
             var response = await _httpClient.PostAsJsonAsync("api/Auth/login", model);
             response.EnsureSuccessStatusCode();
-            var createdData = await response.Content.ReadFromJsonAsync<UserModel>();
+            var createdData = await response.Content.ReadFromJsonAsync<User>();
             return createdData;
         }
 
@@ -51,5 +66,19 @@ namespace POS.Presentation.Services.Implementations
             return await response.Content.ReadFromJsonAsync<UserModel>();
         }
 
+        Task<List<User>> IUserService.GetDataAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<User> IUserService.GetByUsername(UserModel item)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<User> IUserService.GetById(string id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

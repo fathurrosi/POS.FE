@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using POS.Presentation.Attribute;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using POS.Domain.Entities;
+using POS.Presentation.Attribute;
 using POS.Presentation.Models;
+using POS.Presentation.Services.Implementations;
 using POS.Presentation.Services.Interfaces;
 using POS.Shared;
+using POS.Shared.Settings;
 
 
 namespace POS.Presentation.Controllers
@@ -12,97 +15,92 @@ namespace POS.Presentation.Controllers
     [POSAuthorize(screen: Constants.CODE_Role)]
     public class RoleController : Controller
     {
-        private IRoleService _RoleService;
-        protected IAuthorizationService _AuthorizationService { get; }
-        public RoleController(IRoleService RoleService, IAuthorizationService authorizationService)
+
+
+        private readonly PagingSettings _pagingSettings;
+        private readonly IRoleService _roleService;
+        protected IAuthorizationService _authorizationService { get; }
+        public RoleController(IRoleService RoleService, IAuthorizationService authorizationService, PagingSettings pagingSettings)
         {
-            _RoleService = RoleService;
-            _AuthorizationService = authorizationService;
+            _roleService = RoleService;
+            _authorizationService = authorizationService;
+            _pagingSettings = pagingSettings;
         }
         // GET: RoleController
 
-        //[POSAuthorize("User")]
-        public async Task<IActionResult> Index()
-        {
-            List<Role> items = await _RoleService.GetDataAsync();
-            List<RoleModel> roleModels = items.Select(role => new RoleModel
-            {
-                Id = role.Id,
-                Name = role.Name,
-                Description = role.Description,
-                CreatedDate = role.CreatedDate,
-                ModifiedDate = role.ModifiedDate
-            }).ToList();
-            // Check authorization for the current user 
 
-            return View(roleModels);
-        }
-        // GET: RoleController/Details/5
-        public ActionResult Details(int id)
+        public async Task<IActionResult> Index(int? pageIndex = 1)
         {
-            return View();
+            var result = await _roleService.GetPagingAsync(pageIndex.Value, _pagingSettings.DefaultPageSize);
+
+            return View(new RoleListModel(result));
+        }
+        // GET: ProductController/Edit/5
+        public async Task<IActionResult> Edit(int id)
+        {
+            var result = await _roleService.GetDataByIdAsync(id);
+            var RoleItems = await _roleService.GetDataAsync();
+            var model = new RoleModel(result);
+            //model.ParentList = RoleItems.Where(t => t.Id != id).Select(t => new SelectListItem { Text = t.Name, Value = t.Id.ToString() });
+            return View(model);
         }
 
-        // GET: RoleController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: RoleController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Edit(int id, RoleModel model)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _roleService.Save(model.Item);
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(model);
             }
             catch
             {
-                return View();
+                return View(model);
             }
         }
 
-        // GET: RoleController/Edit/5
-        public ActionResult Edit(int id)
+
+        // GET: ProductController/Edit/5
+        public async Task<IActionResult> Delete(int id)
         {
-            return View();
+            var itemToDelete = await _roleService.Delete(id);
+            if (itemToDelete == 0)
+            {
+                return NotFound();
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
-        // POST: RoleController/Edit/5
+
+
+        public IActionResult Create()
+        {
+            var item = new RoleModel();
+            item.IsDisabled = false;
+            return View(item);
+        }
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<IActionResult> Create(RoleModel model)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _roleService.Save(model.Item);
+                    return RedirectToAction(nameof(Index));
+                }
+                return View(model);
             }
             catch
             {
-                return View();
-            }
-        }
-
-        // GET: RoleController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: RoleController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
+                return View(model);
             }
         }
     }

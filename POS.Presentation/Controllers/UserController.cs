@@ -40,7 +40,7 @@ namespace POS.Presentation.Controllers
 
         public async Task<IActionResult> Index()
         {
-            List<UserModel> items = await _userService.GetDataAsync();
+            List<User> items = await _userService.GetDataAsync();
             return View(items);
         }
 
@@ -50,11 +50,15 @@ namespace POS.Presentation.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(UserModel model)
+        public async Task<IActionResult> Login(LoginModel model)
         {
             if (ModelState.IsValid)
             {
-                LoginResponse<User> response = await _authService.GetTokenFromApiAsync(model);
+                LoginResponse<User> response = await _authService.GetTokenFromApiAsync(new Domain.Models.Request.LoginRequest
+                {
+                    Username = model.Username,
+                    Password = model.Password
+                });
                 if (response != null && response.Success)
                 {
                     User user = response.Data;
@@ -85,7 +89,7 @@ namespace POS.Presentation.Controllers
                         HttpOnly = true,
                         Secure = true,
                         SameSite = SameSiteMode.Strict,
-                        Expires = DateTime.UtcNow.AddMinutes(60),                        
+                        Expires = DateTime.UtcNow.AddMinutes(60),
                     };
 
                     Response.Cookies.Append("token", response.Token, cookieOptions);

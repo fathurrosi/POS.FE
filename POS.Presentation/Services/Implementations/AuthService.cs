@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using POS.Domain.Entities;
+using POS.Domain.Models.Request;
 using POS.Domain.Models.Response;
 using POS.Presentation.Models;
 using POS.Presentation.Services.Interfaces;
@@ -18,7 +19,7 @@ namespace POS.Presentation.Services.Implementations
             _httpClient = httpClientFactory.CreateClient("ApiClient");
         }
 
-        public async Task<LoginResponse<User>> GetTokenFromApiAsync(UserModel item)
+        public async Task<LoginResponse<User>> GetTokenFromApiAsync(LoginRequest item)
         {
             try
             {
@@ -49,5 +50,6 @@ namespace POS.Presentation.Services.Implementations
                 };
             }
         }
+
     }
 }
