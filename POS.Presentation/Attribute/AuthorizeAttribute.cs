@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 namespace POS.Presentation.Attribute
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class POSAuthorizeAttribute : TypeFilterAttribute
+    public class AuthorizeAttribute : TypeFilterAttribute
     {
-        public POSAuthorizeAttribute(string screen = null)
-       : base(typeof(POSAuthorizeFilter))
+        public AuthorizeAttribute(string screen = null)
+       : base(typeof(AuthorizeFilter))
         {
             Screen = screen;
             Arguments = new object[] { screen };

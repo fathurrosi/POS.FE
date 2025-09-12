@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Options;
 using POS.Presentation.Handlers;
+using POS.Presentation.Middlewares;
 using POS.Presentation.Services.Implementations;
 using POS.Presentation.Services.Interfaces;
 using POS.Shared.Settings;
@@ -33,7 +34,7 @@ builder.Services.AddAuthentication(options =>
 }).AddCookie(POS.Shared.Constants.Cookies_Name, options =>
 {
     options.LoginPath = "/User/Login";
-    options.EventsType = typeof(POSCookieHandler);
+    options.EventsType = typeof(CookieHandler);
     options.Cookie.HttpOnly = true; 
     options.ExpireTimeSpan = TimeSpan.FromMinutes(60); 
     options.LoginPath = "/User/Login"; 
@@ -42,7 +43,7 @@ builder.Services.AddAuthentication(options =>
     options.SlidingExpiration = true;
     options.Cookie.Name = POS.Shared.Constants.Cookies_Name; 
 });
-builder.Services.AddScoped<POSCookieHandler>();
+builder.Services.AddScoped<CookieHandler>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<JwtAuthHeaderHandler>();
@@ -52,12 +53,13 @@ builder.Services.AddHttpClient("ApiClient", client =>
 {
     client.BaseAddress = new Uri(apiUrl);
     client.DefaultRequestHeaders.Add("Accept", "application/json");
-})
-.AddHttpMessageHandler<JwtAuthHeaderHandler>();
+}).AddHttpMessageHandler<JwtAuthHeaderHandler>();
+
+
 
 
 var app = builder.Build();
-
+app.UseMiddleware<JwtMiddleware>();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

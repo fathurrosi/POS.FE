@@ -4,7 +4,7 @@ using POS.Shared;
 
 namespace POS.Presentation.Controllers
 {
-    [POSAuthorize(screen: Constants.CODE_Supplier)]
+    [Authorize(screen: Constants.CODE_Supplier)]
     public class SupplierController : Controller
     {
         // GET: SupplierController

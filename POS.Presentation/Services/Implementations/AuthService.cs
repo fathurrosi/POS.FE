@@ -19,7 +19,20 @@ namespace POS.Presentation.Services.Implementations
             _httpClient = httpClientFactory.CreateClient("ApiClient");
         }
 
-        public async Task<LoginResponse<User>> GetTokenFromApiAsync(LoginRequest item)
+        public async Task<RefreshTokenResponse> RefreshTokenAsync(RefreshTokenRequest resquest)
+        {
+            var json = JsonConvert.SerializeObject(resquest);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync("api/Auth/Refresh", content);
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<RefreshTokenResponse>();
+            }
+
+            return null;
+        }
+
+        public async Task<LoginResponse<User>> LoginAsync(LoginRequest item)
         {
             try
             {

@@ -12,7 +12,7 @@ using POS.Shared.Settings;
 
 namespace POS.Presentation.Controllers
 {
-    [POSAuthorize(screen: Constants.CODE_Role)]
+    [Attribute.Authorize(screen: Constants.CODE_Role)]
     public class RoleController : Controller
     {
 

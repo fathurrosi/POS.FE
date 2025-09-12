@@ -14,7 +14,7 @@ namespace POS.Presentation.Handlers
     using System.ComponentModel.Design;
     using System.Security.Claims;
 
-    public class POSCookieHandler : CookieAuthenticationEvents
+    public class CookieHandler : CookieAuthenticationEvents
     {
         public override Task SignedIn(CookieSignedInContext context)
         {

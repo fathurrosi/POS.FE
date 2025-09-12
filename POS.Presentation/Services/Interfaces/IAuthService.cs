@@ -6,6 +6,7 @@ namespace POS.Presentation.Services.Interfaces
 {
     public interface IAuthService
     {
-        Task<LoginResponse< User>> GetTokenFromApiAsync(LoginRequest item);
+        Task<RefreshTokenResponse> RefreshTokenAsync(RefreshTokenRequest refreshTokenRequest);
+        Task<LoginResponse< User>> LoginAsync(LoginRequest item);
     }
 }

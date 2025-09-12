@@ -44,15 +44,6 @@ namespace POS.Presentation.Controllers
             _authService = authService;
         }
 
-
-        public async Task<IActionResult> Index(int? pageIndex = 1)
-        {
-            var result = await _userService.GetPagingAsync(pageIndex.Value, _pagingSettings.DefaultPageSize);
-
-            return View(new UserListModel(result));
-        }
-
-
         public IActionResult Login(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
@@ -64,7 +55,7 @@ namespace POS.Presentation.Controllers
         {
             if (ModelState.IsValid)
             {
-                LoginResponse<User> response = await _authService.GetTokenFromApiAsync(new Domain.Models.Request.LoginRequest
+                LoginResponse<User> response = await _authService.LoginAsync(new Domain.Models.Request.LoginRequest
                 {
                     Username = model.Username,
                     Password = model.Password
@@ -89,20 +80,28 @@ namespace POS.Presentation.Controllers
                     var principal = new ClaimsPrincipal(identity);
                     await HttpContext.SignInAsync(principal);
 
-                    var userData = new UserData { Username = model.Username, Roles = roles.Select(t => t.Name).ToList(), Previllages = previllages };
+                    var userData = new UserData { 
+                        Username = model.Username, 
+                        Roles = roles.Select(t => t.Name).ToList(), 
+                        Previllages = previllages ,
+                        Token = new JwtToken { AccessToken = response.Token, RefreshToken = response.RefreshToken, RefreshTokenExpires = user.RefreshTokenExpires.GetValueOrDefault() } 
+                    };
                     var userDataJson = JsonConvert.SerializeObject(userData);
                     var base64data = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(userDataJson));
+
                     HttpContext.Session.SetString($"UserData_{model.Username}", base64data);
 
-                    var cookieOptions = new CookieOptions
-                    {
-                        HttpOnly = true,
-                        Secure = true,
-                        SameSite = SameSiteMode.Strict,
-                        Expires = DateTime.UtcNow.AddMinutes(60),
-                    };
+                    //var cookieOptions = new CookieOptions
+                    //{
+                    //    HttpOnly = true,
+                    //    Secure = true,
+                    //    SameSite = SameSiteMode.Strict,
+                    //    Expires = DateTime.UtcNow.AddMinutes(60),
+                    //};
 
-                    Response.Cookies.Append("token", response.Token, cookieOptions);
+                    //Response.Cookies.Append("token", response.Token, cookieOptions);
+
+                    //await StoreTokenAsync(new RefreshTokenResponse { AccessToken = response.Token, RefreshToken = response.RefreshToken, RefreshTokenExpires = user.RefreshTokenExpires.GetValueOrDefault() });
 
                     if (Url.IsLocalUrl(returnUrl))
                     {
@@ -119,6 +118,30 @@ namespace POS.Presentation.Controllers
             return View(model);
         }
 
+
+        public async Task<IActionResult> Index(int? pageIndex = 1)
+        {
+            var result = await _userService.GetPagingAsync(pageIndex.Value, _pagingSettings.DefaultPageSize);
+
+            return View(new UserListModel(result));
+        }
+
+
+        //public async Task StoreTokenAsync(RefreshTokenResponse refreshToken)
+        //{
+        //    TimeSpan timeSpan = TimeSpan.FromMinutes(2);
+        //    DateTime expirationDate = DateTime.UtcNow.Add(timeSpan);
+        //    var cacheEntryOptions = new DistributedCacheEntryOptions().SetSlidingExpiration(timeSpan); // expires in 1 hour
+
+        //    var tokenJson = JsonConvert.SerializeObject(refreshToken);
+        //    await _cache.SetStringAsync("POSToken", tokenJson, cacheEntryOptions);
+        //}
+        //public async Task<IActionResult> Logout()
+        //{
+        //    await HttpContext.SignOutAsync();
+        //    Response.Cookies.Delete("token");
+        //    return RedirectToAction("Login", "User");
+        //}
 
         // GET: ProductController/Edit/5
         public async Task<IActionResult> Edit(string id)

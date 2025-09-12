@@ -4,7 +4,7 @@ using POS.Shared;
 
 namespace POS.Presentation.Controllers
 {
-    [POSAuthorize(screen: Constants.CODE_Previllage)]
+    [Authorize(screen: Constants.CODE_Previllage)]
     public class PrevillageController : Controller
     {
         // GET: PrevillageController

@@ -5,7 +5,7 @@ using POS.Shared;
 
 namespace POS.Presentation.Controllers
 {
-    [POSAuthorize(screen: Constants.CODE_Customer)]
+    [Attribute.Authorize(screen: Constants.CODE_Customer)]
     public class CustomerController : Controller
     {
         public IActionResult Index()

@@ -18,10 +18,10 @@ using static System.Collections.Specialized.BitVector32;
 
 namespace POS.Presentation.Filters
 {
-    public class POSAuthorizeFilter : IAsyncAuthorizationFilter
+    public class AuthorizeFilter : IAsyncAuthorizationFilter
     {
         private string _screen;
-        public POSAuthorizeFilter(string screen)
+        public AuthorizeFilter(string screen)
         {
             _screen = screen;
         }

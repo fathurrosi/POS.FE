@@ -9,7 +9,7 @@ using POS.Shared.Settings;
 
 namespace POS.Presentation.Controllers
 {
-    [POSAuthorize(screen: Constants.CODE_Menu)]
+    [Authorize(screen: Constants.CODE_Menu)]
     public class MenuController : Controller
     {
         private readonly PagingSettings _pagingSettings;
